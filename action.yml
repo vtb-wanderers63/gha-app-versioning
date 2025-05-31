@@ -1,0 +1,38 @@
+name: 'Application Versioning'
+description: 'Automatically version applications with semantic versioning and release types'
+author: 'Your Name'
+branding:
+  icon: 'tag'
+  color: 'blue'
+
+inputs:
+  repo:
+    description: 'Repository name (e.g., owner/repo-name)'
+    required: true
+  repo_owner:
+    description: 'Repository owner'
+    required: true
+  token:
+    description: 'GitHub token with repo permissions'
+    required: true
+  application_name:
+    description: 'Application name for tag prefix'
+    required: true
+  release_type:
+    description: 'Release type (Alpha, Beta, Dev, or empty for production)'
+    required: false
+    default: ''
+  change_type:
+    description: 'Version change type (major, minor, patch)'
+    required: true
+    default: 'patch'
+
+outputs:
+  tag_version:
+    description: 'Generated tag with release type (e.g., V1.5.0-Alpha)'
+  new_tag:
+    description: 'Complete new tag (e.g., nodejs-rockets/V1.5.0-Alpha)'
+
+runs:
+  using: 'node20'
+  main: 'index.js'

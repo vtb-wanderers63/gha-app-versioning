@@ -1,0 +1,130 @@
+# Application Versioning Action
+
+Automatically version your applications with semantic versioning and release types.
+
+## Features
+
+- 🏷️ **Smart Tag Management**: Follows `<app-name>/<version>-<release-type>` convention
+- 📦 **Semantic Versioning**: Proper major.minor.patch versioning with reset logic
+- 🎯 **Release Types**: Support for Alpha, Beta, Dev, and Production releases
+- 🔍 **Intelligent Filtering**: Finds the latest version for specific app/release combinations
+- ✅ **Duplicate Prevention**: Prevents creating duplicate tags
+- 📊 **Rich Output**: Provides detailed summaries and outputs
+
+## Usage
+
+```yaml
+name: Version Application
+on:
+  workflow_dispatch:
+    inputs:
+      change_type:
+        description: 'Version change type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      release_type:
+        description: 'Release type'
+        required: false
+        type: choice
+        options:
+          - ''
+          - Alpha
+          - Beta
+          - Dev
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Version Application
+        uses: your-org/app-versioning-action@v1
+        with:
+          repo: ${{ github.repository }}
+          repo_owner: ${{ github.repository_owner }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          application_name: 'my-app'
+          release_type: ${{ inputs.release_type }}
+          change_type: ${{ inputs.change_type }}
+```
+
+## Inputs
+
+| Input | Description | Required | Default |
+|-------|-------------|----------|---------|
+| `repo` | Repository name (e.g., owner/repo-name) | Yes | |
+| `repo_owner` | Repository owner | Yes | |
+| `token` | GitHub token with repo permissions | Yes | |
+| `application_name` | Application name for tag prefix | Yes | |
+| `release_type` | Release type (Alpha, Beta, Dev, or empty) | No | `''` |
+| `change_type` | Version change type (major, minor, patch) | Yes | `patch` |
+
+## Outputs
+
+| Output | Description |
+|--------|-------------|
+| `tag_version` | Generated tag with release type (e.g., V1.5.0-Alpha) |
+| `new_tag` | Complete new tag (e.g., my-app/V1.5.0-Alpha) |
+
+## Examples
+
+### Basic Usage
+```yaml
+- uses: your-org/app-versioning-action@v1
+  with:
+    repo: ${{ github.repository }}
+    repo_owner: ${{ github.repository_owner }}
+    token: ${{ secrets.GITHUB_TOKEN }}
+    application_name: 'web-api'
+    change_type: 'patch'
+```
+
+### With Release Type
+```yaml
+- uses: your-org/app-versioning-action@v1
+  with:
+    repo: ${{ github.repository }}
+    repo_owner: ${{ github.repository_owner }}
+    token: ${{ secrets.GITHUB_TOKEN }}
+    application_name: 'mobile-app'
+    release_type: 'Beta'
+    change_type: 'minor'
+```
+
+### Using Outputs
+```yaml
+- name: Version Application
+  id: version
+  uses: your-org/app-versioning-action@v1
+  with:
+    repo: ${{ github.repository }}
+    repo_owner: ${{ github.repository_owner }}
+    token: ${{ secrets.GITHUB_TOKEN }}
+    application_name: 'my-service'
+    change_type: 'major'
+
+- name: Create Release
+  uses: actions/create-release@v1
+  with:
+    tag_name: ${{ steps.version.outputs.new_tag }}
+    release_name: Release ${{ steps.version.outputs.tag_version }}
+```
+
+## Tag Examples
+
+| Application | Current Tag | Change Type | Release Type | New Tag |
+|-------------|-------------|-------------|--------------|---------|
+| web-api | web-api/V1.2.3 | patch | | web-api/V1.2.4 |
+| mobile-app | mobile-app/V2.1.0-Alpha | minor | Alpha | mobile-app/V2.2.0-Alpha |
+| backend | backend/V1.0.5-Beta | major | Beta | backend/V2.0.0-Beta |
+
+## License
+
+MIT
