@@ -20,6 +20,16 @@ async function run() {
     const octokit = github.getOctokit(token);
     const [owner, repoName] = repo.split('/');
 
+    // Check if we're in a git repository, if not, clone it
+    try {
+      execSync('git rev-parse --git-dir', { stdio: 'pipe' });
+      core.info('Already in a git repository');
+    } catch (error) {
+      core.info('Not in a git repository, cloning...');
+      const repoUrl = `https://x-access-token:${token}@github.com/${repo}.git`;
+      execSync(`git clone ${repoUrl} .`, { stdio: 'inherit' });
+    }
+
     // Configure Git
     execSync('git config --global user.name "github-actions[bot]"');
     execSync('git config --global user.email "github-actions[bot]@users.noreply.github.com"');
