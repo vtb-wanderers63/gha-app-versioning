@@ -9,9 +9,6 @@ inputs:
   repo:
     description: 'Repository name (e.g., owner/repo-name)'
     required: true
-  repo_owner:
-    description: 'Repository owner'
-    required: true
   token:
     description: 'GitHub token with repo permissions'
     required: true

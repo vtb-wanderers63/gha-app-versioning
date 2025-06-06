@@ -6,7 +6,6 @@ async function run() {
   try {
     // Get inputs
     const repo = core.getInput('repo', { required: true });
-    const repoOwner = core.getInput('repo_owner', { required: true });
     const token = core.getInput('token', { required: true });
     const applicationName = core.getInput('application_name', { required: true });
     const releaseType = core.getInput('release_type') || '';
